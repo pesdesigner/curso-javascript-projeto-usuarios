@@ -13,10 +13,36 @@ class UserController {
 
             event.preventDefault()
 
-            let user = this.getValues()
+            let values = this.getValues()
 
-            this.addLine(user);
+            this.getPhoto((content)=>{
+                values.photo = content
+                this.addLine(values)
+            })
         })     
+    }
+
+    getPhoto(callback){
+        let fileReader = new FileReader()
+
+        var spread = [...this.formEl.elements]
+
+        let elements = spread.filter(item => {
+            if (item.name === 'photo'){
+                return item
+            }
+        })
+
+        let file = elements[0].files[0]
+
+        fileReader.onload = ()=>{
+
+            callback(fileReader.result)
+                
+        }
+
+        fileReader.readAsDataURL(file)
+
     }
 
     getValues() {
@@ -43,7 +69,7 @@ class UserController {
 
         this.tableEl.innerHTML = `
             <tr>
-                <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+                <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
                 <td>${dataUser.name}</td>
                 <td>${dataUser.email}</td>
                 <td>${dataUser.admin}</td>
@@ -53,8 +79,6 @@ class UserController {
                 <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
                 </td>
             </tr>   
-        `;
-       
+        `; 
     }
-
 }
