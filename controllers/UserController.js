@@ -43,36 +43,24 @@ class UserController {
                         result._photo = content
                     }
 
-                    tr.dataset.user = JSON.stringify(result)
-                
-                    tr.innerHTML = `
-                    <tr>
-                        <td><img src="${result._photo}" alt="User Image" class="img-circle img-sm"></td>
-                        <td>${result._name}</td>
-                        <td>${result._email}</td>
-                        <td>${(result._admin) ? 'Sim' : 'Não'}</td>
-                        <td>${Utils.dateFormat(result._register)}</td>
-                        <td>
-                        <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-                        <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-                        </td>
-                    </tr>   
-                `;
-        
-                this.addEventsTr(tr)
-        
-                this.updateCount()
+                    let user = new User()
 
-                this.formUpdateEl.reset();
+                    user.loadFromJSON(result)
 
-                btn.disabled = false
+                    this.getTr(user, tr)
 
-                this.showPanelCreate()
+                    this.updateCount()
 
-                },
-                (e) => {
-                    console.error(e)
-                }
+                    this.formUpdateEl.reset();
+
+                    btn.disabled = false
+
+                    this.showPanelCreate()
+
+                    },
+                    (e) => {
+                        console.error(e)
+                    }
             )
 
             })
@@ -214,29 +202,34 @@ class UserController {
 
     addLine(dataUser){
 
-        let tr = document.createElement('tr')
+        let tr = this.getTr(dataUser)
+        this.tableEl.appendChild(tr) 
+        this.updateCount()
+    }
+
+    getTr(dataUser, tr =null){
+
+        if(tr === null) tr = document.createElement('tr')
 
         tr.dataset.user = JSON.stringify(dataUser) // JSON convertido em texto String JSON
 
         tr.innerHTML = `
-            <tr>
-                <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
-                <td>${dataUser.name}</td>
-                <td>${dataUser.email}</td>
-                <td>${(dataUser.admin) ? 'Sim' : 'Não'}</td>
-                <td>${Utils.dateFormat(dataUser.register)}</td>
-                <td>
-                <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-                <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
-                </td>
-            </tr>   
-        `;
+        <tr>
+            <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
+            <td>${dataUser.name}</td>
+            <td>${dataUser.email}</td>
+            <td>${(dataUser.admin) ? 'Sim' : 'Não'}</td>
+            <td>${Utils.dateFormat(dataUser.register)}</td>
+            <td>
+            <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
+            <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
+            </td>
+        </tr>   
+    `;
 
-        this.addEventsTr(tr)
+    this.addEventsTr(tr)
 
-        this.tableEl.appendChild(tr) 
-
-        this.updateCount()
+    return tr
     }
 
     addEventsTr(tr){
